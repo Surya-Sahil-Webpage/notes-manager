@@ -1,0 +1,16 @@
+# Python virtual environment — never commit this
+venv/
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+
+# Environment variables — contains secrets, never commit
+.env
+
+# macOS system file
+.DS_Store
+
+# VS Code workspace settings
+.vscode/

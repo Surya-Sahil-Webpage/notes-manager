@@ -1,11 +1,10 @@
 # main.py
-# Entry point of the FastAPI application.
-# Registers all routers and any global middleware (CORS comes in Phase 15).
-
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+# CORSMiddleware → FastAPI middleware that adds CORS headers to every response
+# This tells the browser: "yes, I allow requests from localhost:5173"
+
 from app.routers import note as note_router
-# Imports the routers/note.py module as note_router
-# We use an alias to keep it clear: note_router.router is the APIRouter instance
 
 app = FastAPI(
     title="Notes Manager API",
@@ -13,9 +12,20 @@ app = FastAPI(
     version="1.0.0"
 )
 
+# ─── CORS Middleware ───────────────────────────────────────────────────────────
+# Must be added BEFORE routers are registered
+# allow_origins → which frontend URLs are allowed to call this API
+# allow_methods → which HTTP methods are permitted
+# allow_headers → which request headers are permitted
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # React dev server
+    allow_credentials=True,
+    allow_methods=["*"],       # GET, POST, PUT, DELETE
+    allow_headers=["*"],       # Content-Type, Authorization, etc.
+)
+
 # ─── Register Routers ─────────────────────────────────────────────────────────
-# include_router() attaches all routes defined in note_router.router to the app
-# After this line, all 5 /notes endpoints are live and available
 app.include_router(note_router.router)
 
 # ─── Health Check ─────────────────────────────────────────────────────────────

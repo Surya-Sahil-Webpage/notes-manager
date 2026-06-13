@@ -14,8 +14,8 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],   # ← temporary wildcard to confirm CORS is the only issue
-    allow_credentials=False,  # ← must be False when using wildcard
+    allow_origins=["https://notes-manager-eight-topaz.vercel.app"],  # ← hardcoded, specific
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )

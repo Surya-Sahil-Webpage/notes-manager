@@ -1,10 +1,11 @@
 # main.py
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-# CORSMiddleware → FastAPI middleware that adds CORS headers to every response
-# This tells the browser: "yes, I allow requests from localhost:5173"
-
+from dotenv import load_dotenv
 from app.routers import note as note_router
+
+load_dotenv()
 
 app = FastAPI(
     title="Notes Manager API",
@@ -12,20 +13,25 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# ─── CORS Middleware ───────────────────────────────────────────────────────────
-# Must be added BEFORE routers are registered
-# allow_origins → which frontend URLs are allowed to call this API
-# allow_methods → which HTTP methods are permitted
-# allow_headers → which request headers are permitted
+# ─── CORS ─────────────────────────────────────────────────────────────────────
+# Read allowed origins from environment variable
+# Local: CORS_ORIGINS=http://localhost:5173
+# Production: CORS_ORIGINS=https://notes-manager.vercel.app
+# os.getenv returns a string — split by comma to support multiple origins
+cors_origins = os.getenv(
+    "CORS_ORIGINS",
+    "http://localhost:5173"   # default for local development
+).split(",")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # React dev server
+    allow_origins=cors_origins,
     allow_credentials=True,
-    allow_methods=["*"],       # GET, POST, PUT, DELETE
-    allow_headers=["*"],       # Content-Type, Authorization, etc.
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
-# ─── Register Routers ─────────────────────────────────────────────────────────
+# ─── Routers ──────────────────────────────────────────────────────────────────
 app.include_router(note_router.router)
 
 # ─── Health Check ─────────────────────────────────────────────────────────────

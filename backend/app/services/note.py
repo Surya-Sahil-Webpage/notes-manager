@@ -59,15 +59,17 @@ def create_note(db: Session, note_data: NoteCreate) -> Note:
 
 
 # ─── Get All Notes ────────────────────────────────────────────────────────────
-def get_all_notes(db: Session) -> list[Note]:
+def get_all_notes(db: Session, skip: int = 0, limit: int = 100) -> list[Note]:
     """
-    Retrieves all notes from the database, ordered newest first.
+    Retrieves all notes from the database, ordered newest first, with pagination.
     Returns a list of Note ORM objects (empty list if no notes exist).
     """
     return (
         db.query(Note)                          # SELECT * FROM notes
         .order_by(Note.created_at.desc())       # ORDER BY created_at DESC
-        .all()                                  # fetch all rows as a list
+        .offset(skip)                           # skip offset rows
+        .limit(limit)                           # limit number of rows returned
+        .all()                                  # fetch rows as a list
     )
 
 

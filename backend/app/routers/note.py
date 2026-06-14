@@ -50,14 +50,16 @@ def create_note(
 
 
 # ─── GET /notes ───────────────────────────────────────────────────────────────
-# Returns all notes as a list
+# Returns notes as a list (supports pagination via query parameters)
 # list[NoteResponse] → response is an array of NoteResponse objects
 @router.get("/", response_model=list[NoteResponse], status_code=status.HTTP_200_OK)
 def get_all_notes(
+    skip: int = 0,
+    limit: int = 100,
     db: Session = Depends(get_db)
 ):
-    """Retrieve all notes."""
-    return services.get_all_notes(db=db)
+    """Retrieve notes with pagination."""
+    return services.get_all_notes(db=db, skip=skip, limit=limit)
 
 
 # ─── GET /notes/{note_id} ─────────────────────────────────────────────────────
